@@ -10,6 +10,7 @@
 #include <vector>
 #include <iomanip>
 #include <cmath>
+#include <numeric>
 
 void debug()
 {
@@ -19,9 +20,23 @@ void debug()
     std::cout << "\tperiod\t\tthe number of days defining a period" << std::endl;
 }
 
+long double average(std::vector<long double> memory, size_t period)
+{
+    long double ans = 0.f;
+
+    if (memory.size() > period) {
+        for (size_t counter = memory.size() - period; counter != memory.size(); counter++) {
+            if (memory[counter] - memory[counter - 1] > 0) {
+                ans += (memory[counter] - memory[counter - 1]) / period;
+            }
+        }
+    }
+    return ans;
+}
+
 void loop(int period)
 {
-    std::vector<float> memory;
+    std::vector<long double> memory;
     std::string str = "0.1";
     bool incrase = true;
     int nbSwitch = 0;
@@ -37,7 +52,8 @@ void loop(int period)
         }
         memory.push_back(atof(str.c_str()));
         if (memory.size() > period) {
-            std::cout << "r=" << std::round((memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100) << "%";
+            std::cout << "g=" << average(memory, period);
+            std::cout << "\tr=" << std::round((memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100) << "%";
             if (memory.size() > period + 1 && !incrase && (memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 > 0) {
                 nbSwitch++;
                 std::cout << "\ta switch occurs";
@@ -53,7 +69,7 @@ void loop(int period)
             std::cout << std::endl;
         }
         else
-            std::cout << "r=nan%" << std::endl;
+            std::cout << "g=nan\tr=nan%" << std::endl;
     }
 }
 

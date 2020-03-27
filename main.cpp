@@ -20,6 +20,20 @@ void debug()
     std::cout << "\tperiod\t\tthe number of days defining a period" << std::endl;
 }
 
+long double derivate(std::vector<long double> memory, size_t period)
+{
+    long double ans = 0.f;
+    long double average = 0.f;
+
+    if (memory.size() >= period) {
+        for (size_t index = 0; index != period; index++)
+            average += memory[memory.size() - index - 1] / period;
+        for (size_t index = 0; index != period; index++)
+            ans += pow((memory[memory.size() - index - 1] - average), 2) / period;
+    }
+    return sqrt(ans);
+}
+
 long double average(std::vector<long double> memory, size_t period)
 {
     long double ans = 0.f;
@@ -54,22 +68,27 @@ void loop(int period)
         if (memory.size() > period) {
             std::cout << "g=" << average(memory, period);
             std::cout << "\tr=" << std::round((memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100) << "%";
-            if (memory.size() > period + 1 && !incrase && (memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 > 0) {
-                nbSwitch++;
-                std::cout << "\ta switch occurs";
-            }
-            else if (memory.size() > period + 1 && incrase && (memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 < 0) {
-                nbSwitch++;
-                std::cout << "\ta switch occurs";
-            }
-            if ((memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 > 0)
-                incrase = true;
-            else if ((memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 < 0)
-                incrase = false;
-            std::cout << std::endl;
+            std::cout << "\t";
         }
         else
-            std::cout << "g=nan\tr=nan%" << std::endl;
+            std::cout << "g=nan\tr=nan%\t";
+        if (memory.size() >= period)
+            std::cout << "s=" << derivate(memory, period);
+        else
+            std::cout << "s=nan";
+        if (memory.size() > period && memory.size() > period + 1 && !incrase && (memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 > 0) {
+            nbSwitch++;
+            std::cout << "\ta switch occurs";
+        }
+        else if (memory.size() > period && memory.size() > period + 1 && incrase && (memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 < 0) {
+            nbSwitch++;
+            std::cout << "\ta switch occurs";
+        }
+        if (memory.size() > period && (memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 > 0)
+            incrase = true;
+        else if (memory.size() > period && (memory[memory.size() - 1] * 100 / memory[memory.size() - 1 - period]) - 100 < 0)
+            incrase = false;
+        std::cout << std::endl;
     }
 }
 

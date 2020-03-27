@@ -8,6 +8,7 @@
 NAME 	=	groundhog
 
 SRCS  =	./main.cpp \
+		./average.cpp \
 
 OBJS	=	$(SRCS:.cpp=.o)
 
